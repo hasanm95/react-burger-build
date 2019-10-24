@@ -4,7 +4,7 @@ export default class BurgerBuilder extends Component {
   render() {
     return (
       <Fragment>
-        Burger Builder
+        Burger Builder Container
       </Fragment>
     )
   }
