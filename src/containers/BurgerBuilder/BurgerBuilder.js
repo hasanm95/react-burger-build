@@ -3,6 +3,8 @@ import Burger from '../../components/Burger/Burger'
 import BuildControls from '../../components/Burger/BuildControls/BuildControls'
 import Modal from '../../components/UI/Modal/Modal'
 import OrderSummery from '../../components/Burger/OrderSummery/OrderSummery'
+import axios from '../../axios-orders';
+import Spinner from '../../components/UI/Spinner/Spinner'
 
 
 const INGREDIENTS_PRICES = {
@@ -22,6 +24,7 @@ const BurgerBuilder = () => {
   const [price, setPrice] = useState(4);
   const [purchageAble, setPurchageAble] = useState(false);
   const [purchaging, setPurchaging] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const updatePurchageAble = ingredients => {
     const totalIngredients = Object.keys(ingredients)
@@ -64,7 +67,31 @@ const BurgerBuilder = () => {
   }
 
   const continuePurchagingHandler = () => {
-    alert('Please, Continue')
+    // alert('Please, Continue')
+    setLoading(true);
+    const order = {
+        ingredients,
+        price: price.toFixed(2),
+        customer: {
+          name: 'Hasan Mobarak',
+          address: {
+            street: 'test street',
+            zipCode: '3343',
+            country: 'Bangladesh'
+          },
+          email: 'test@test.com',
+          deliveryMethod: 'fastest'
+        }
+    }
+    axios.post('/orders.json', order)
+      .then(response => {
+        setLoading(false);
+        setPurchaging(false)
+      })
+      .catch(error => {
+        setLoading(false);
+        setPurchaging(false)
+      })
   }
 
   useEffect(() => {
@@ -76,17 +103,22 @@ const BurgerBuilder = () => {
     disabledInfo[key] = disabledInfo[key] <= 0;
   }
 
+  let orderSummery = <OrderSummery 
+  ingredients={ingredients}
+  purchaseCancelled={cancelPurchagingHandler}
+  purchaseContiued={continuePurchagingHandler}
+  price={price} />
+
+  if(loading){
+    orderSummery = <Spinner/>
+  }
+
   return (
     <Fragment>
       <Modal 
         show={purchaging} 
         modalClosed={cancelPurchagingHandler}>
-        <OrderSummery 
-          ingredients={ingredients}
-          purchaseCancelled={cancelPurchagingHandler}
-          purchaseContiued={continuePurchagingHandler}
-          price={price}
-        />
+          {orderSummery}
       </Modal>
       <Burger ingredients={ingredients}/>
       <BuildControls
