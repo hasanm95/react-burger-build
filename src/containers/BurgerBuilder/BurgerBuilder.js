@@ -16,23 +16,25 @@ const INGREDIENTS_PRICES = {
 }
 
 const BurgerBuilder = () => {
-  const [ingredients, setIngredients] = useState({
-    salad: 0,
-    bacon: 0,
-    cheese: 0,
-    meat: 0
-  });
+  const [ingredients, setIngredients] = useState(null);
   const [price, setPrice] = useState(4);
   const [purchageAble, setPurchageAble] = useState(false);
   const [purchaging, setPurchaging] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(false);
 
   const updatePurchageAble = ingredients => {
-    const totalIngredients = Object.keys(ingredients)
-    .map(igKey => ingredients[igKey])
-    .reduce((sum, el) => sum + el, 0);
-    setPurchageAble(totalIngredients>0)
+    if(ingredients){
+      const totalIngredients = Object.keys(ingredients)
+      .map(igKey => ingredients[igKey])
+      .reduce((sum, el) => sum + el, 0);
+      setPurchageAble(totalIngredients>0)
+    }
   }
+
+  // const updatePrice = type => {
+  //   const oldCount = ingredients[type];
+  // }
 
   const addIngredientsHandler = type => {
     const oldCount = ingredients[type];
@@ -84,7 +86,7 @@ const BurgerBuilder = () => {
           deliveryMethod: 'fastest'
         }
     }
-    axios.post('/orders', order)
+    axios.post('/orders.json', order)
       .then(response => {
         setLoading(false);
         setPurchaging(false)
@@ -94,22 +96,51 @@ const BurgerBuilder = () => {
         setPurchaging(false)
       })
   }
+  
+  useEffect(() => {
+    axios.get('https://my-react-burger-68eef.firebaseio.com/ingredients.json')
+      .then(res => {
+        setIngredients(res.data)
+      })
+      .catch(err => {
+          setError(true)
+      })
+  }, [])
 
   useEffect(() => {
     updatePurchageAble(ingredients)
   })  
+
+
 
   const disabledInfo = {...ingredients};
   for(let key in disabledInfo){
     disabledInfo[key] = disabledInfo[key] <= 0;
   }
 
-  let orderSummery = <OrderSummery 
-  ingredients={ingredients}
-  purchaseCancelled={cancelPurchagingHandler}
-  purchaseContiued={continuePurchagingHandler}
-  price={price} />
+  let orderSummery = null;
+  let burger = error ? <p>ingredients cant't be loaded</p>:<Spinner/>;
 
+  if(ingredients){
+    burger = (
+      <Fragment>
+        <Burger ingredients={ingredients}/>
+        <BuildControls
+          addIngredients={addIngredientsHandler}
+          removeIngredients={removeIngredientsHandler}
+          disabledInfo={disabledInfo}
+          price={price}
+          purchageAble={purchageAble}
+          ordered={purchagingHandler}
+        />
+      </Fragment>
+    )
+    orderSummery = <OrderSummery 
+    ingredients={ingredients}
+    purchaseCancelled={cancelPurchagingHandler}
+    purchaseContiued={continuePurchagingHandler}
+    price={price} />
+  }
   if(loading){
     orderSummery = <Spinner/>
   }
@@ -121,15 +152,7 @@ const BurgerBuilder = () => {
         modalClosed={cancelPurchagingHandler}>
           {orderSummery}
       </Modal>
-      <Burger ingredients={ingredients}/>
-      <BuildControls
-        addIngredients={addIngredientsHandler}
-        removeIngredients={removeIngredientsHandler}
-        disabledInfo={disabledInfo}
-        price={price}
-        purchageAble={purchageAble}
-        ordered={purchagingHandler}
-      />
+      {burger}
     </Fragment>
   )
 }

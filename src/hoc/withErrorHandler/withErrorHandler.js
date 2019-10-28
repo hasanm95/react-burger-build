@@ -6,13 +6,18 @@ const withErrorHandler = (WrappedComponent, axios) => {
     return (props) => {
         const [error, setError] = useState(null);
         useEffect(() => {
-            axios.interceptors.request.use(res => {
+            const reqInterceptors = axios.interceptors.request.use(req => {
                 setError(null)
+                return req;
             })
-            axios.interceptors.response.use(res => res, err => {
+            const resInterceptors =axios.interceptors.response.use(res => res, err => {
                 setError(err)
-                console.log(err)
             })
+
+            return () => {
+                axios.interceptors.request.eject(reqInterceptors);
+                axios.interceptors.response.eject(resInterceptors);
+            }
         });
 
         const errorConfirmHandler = () => {
