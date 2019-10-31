@@ -13,7 +13,11 @@ const ContactData = props => {
                 type: 'text',
                 placeholder: 'Your Name'
             },
-            value: ''
+            value: '',
+            validation: {
+                required: true
+            },
+            valid: false
         },
         street: {
             elementType: 'input',
@@ -21,7 +25,11 @@ const ContactData = props => {
                 type: 'text',
                 placeholder: 'Your Street'
             },
-            value: ''
+            value: '',
+            validation: {
+                required: true
+            },
+            valid: false
         },
         zipCode: {
             elementType: 'input',
@@ -29,7 +37,13 @@ const ContactData = props => {
                 type: 'text',
                 placeholder: 'Your Zipcode'
             },
-            value: ''
+            value: '',
+            validation: {
+                required: true,
+                minLength: 3,
+                maxLength: 5
+            },
+            valid: false
         },
         country: {
             elementType: 'input',
@@ -37,7 +51,11 @@ const ContactData = props => {
                 type: 'text',
                 placeholder: 'Your Country'
             },
-            value: ''
+            value: '',
+            validation: {
+                required: true
+            },
+            valid: false
         },
         email: {
             elementType: 'input',
@@ -45,7 +63,11 @@ const ContactData = props => {
                 type: 'email',
                 placeholder: 'Your Email'
             },
-            value: ''
+            value: '',
+            validation: {
+                required: true
+            },
+            valid: false
         },
         deliveryMethod: {
             elementType: 'select',
@@ -55,7 +77,11 @@ const ContactData = props => {
                     {value: 'cheapest', displayValue: 'Cheapest'}
                 ]
             },
-            value: 'fastest'
+            value: 'fastest',
+            validation: {
+                required: true
+            },
+            valid: true
         }
     })
     const [loading, setLoading] = useState(false)
@@ -85,8 +111,25 @@ const ContactData = props => {
         const updatedForm = {...orderForm};
         const updatedFormEl = {...updatedForm[inputindentifier]}
         updatedFormEl.value = event.target.value;
+        updatedFormEl.valid = checkValidity(updatedFormEl.value, updatedFormEl.validation);
         updatedForm[inputindentifier] = updatedFormEl;
+        console.log(updatedFormEl.valid)
         setOrderForm(updatedForm);
+    }
+
+    const checkValidity = (value, rules) => {
+        let isValid = true;
+        
+        if(rules.required){
+            isValid = value.trim() !== '' && isValid;
+        }
+        if(rules.minLength){
+            isValid = value.length >= rules.minLength && isValid;
+        }
+        if(rules.maxLength){
+            isValid = value.length <= rules.maxLength && isValid;
+        }
+        return isValid;
     }
 
     const formElementArray = [];
