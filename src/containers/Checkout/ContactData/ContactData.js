@@ -90,6 +90,7 @@ const ContactData = props => {
         }
     }) 
     const [loading, setLoading] = useState(false)
+    const [formIsValid, setFormIsValid] = useState(false);
     const orderHandler = event => {
         event.preventDefault();
         setLoading(true);
@@ -119,7 +120,12 @@ const ContactData = props => {
         updatedFormEl.touched = true;
         updatedFormEl.valid = checkValidity(updatedFormEl.value, updatedFormEl.validation);
         updatedForm[inputindentifier] = updatedFormEl;
+        let isFormValid = true;
+        for(let input in updatedForm){
+            isFormValid = updatedForm[input].valid && isFormValid;
+        }
         setOrderForm(updatedForm);
+        setFormIsValid(isFormValid)
     }
 
     const checkValidity = (value, rules) => {
@@ -160,7 +166,7 @@ const ContactData = props => {
                     />
                 })
             }
-            <Button btnType="Success">Order</Button>
+            <Button disabled={!formIsValid} btnType="Success">Order</Button>
         </form>
     )
 
