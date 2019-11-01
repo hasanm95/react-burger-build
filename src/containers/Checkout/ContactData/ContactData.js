@@ -17,7 +17,8 @@ const ContactData = props => {
             validation: {
                 required: true
             },
-            valid: false
+            valid: false,
+            touched: false
         },
         street: {
             elementType: 'input',
@@ -29,7 +30,8 @@ const ContactData = props => {
             validation: {
                 required: true
             },
-            valid: false
+            valid: false,
+            touched: false
         },
         zipCode: {
             elementType: 'input',
@@ -43,7 +45,8 @@ const ContactData = props => {
                 minLength: 3,
                 maxLength: 5
             },
-            valid: false
+            valid: false,
+            touched: false
         },
         country: {
             elementType: 'input',
@@ -55,7 +58,8 @@ const ContactData = props => {
             validation: {
                 required: true
             },
-            valid: false
+            valid: false,
+            touched: false
         },
         email: {
             elementType: 'input',
@@ -67,7 +71,8 @@ const ContactData = props => {
             validation: {
                 required: true
             },
-            valid: false
+            valid: false,
+            touched: false
         },
         deliveryMethod: {
             elementType: 'select',
@@ -83,7 +88,7 @@ const ContactData = props => {
             },
             valid: true
         }
-    })
+    }) 
     const [loading, setLoading] = useState(false)
     const orderHandler = event => {
         event.preventDefault();
@@ -111,9 +116,9 @@ const ContactData = props => {
         const updatedForm = {...orderForm};
         const updatedFormEl = {...updatedForm[inputindentifier]}
         updatedFormEl.value = event.target.value;
+        updatedFormEl.touched = true;
         updatedFormEl.valid = checkValidity(updatedFormEl.value, updatedFormEl.validation);
         updatedForm[inputindentifier] = updatedFormEl;
-        console.log(updatedFormEl.valid)
         setOrderForm(updatedForm);
     }
 
@@ -143,12 +148,14 @@ const ContactData = props => {
         <form onSubmit={orderHandler}>
             {
                 formElementArray.map(formElement => {
-                    const {id, config: {elementType, value, elementConfig}} = formElement;
+                    const {id, config: {elementType, value, valid, touched, elementConfig}} = formElement;
                     return <Input 
                         key={id}
                         elementType={elementType} 
                         elementConfig={elementConfig}
                         value={value}
+                        invalid={!valid}
+                        touched={touched}
                         changed={(event) => onChangeHandler(event, id)}
                     />
                 })

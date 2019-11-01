@@ -25,3 +25,7 @@
     outline: none;
     background-color: #ccc;
 }
+.Invalid{
+    border-color: red;
+    background-color: #fda49a;
+}
