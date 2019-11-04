@@ -1,28 +1,12 @@
-import React, {useState, useEffect} from 'react'
+import React from 'react'
+import { useSelector } from "react-redux"
 import CheckoutSummery from '../../components/Order/CheckoutSummery/CheckoutSummery'
 import {Route} from 'react-router-dom';
 import ContactData from '../Checkout/ContactData/ContactData'
 import Spinner from '../../components/UI/Spinner/Spinner'
 
 const Checkout = props => {
-    const [ingredients, setIngredients] = useState(null)
-    const [price, setPrice] = useState(4);
-
-    useEffect(() => {
-        const query = new URLSearchParams(props.location.search)
-        const queryIngredients = {};
-        let totalPrice = 0;
-        for(let param of query.entries()){
-            if(param[0] === 'price'){
-                totalPrice = param[1]
-            }else{
-                queryIngredients[param[0]] = +param[1]
-            }
-        }
-        setIngredients(queryIngredients);
-        setPrice(totalPrice);
-    },[])
-
+    const ingredients = useSelector(state => state.ingredients);
     const checkoutCanelledHandler = () => {
         props.history.goBack()
     }
@@ -41,7 +25,7 @@ const Checkout = props => {
         />
         contactData = <Route 
         path={props.match.path + '/contact-data'} 
-        render={(props) => <ContactData ingredients={ingredients} price={price} {...props}/>}/>
+        component={ContactData}/>
     }
 
     return (

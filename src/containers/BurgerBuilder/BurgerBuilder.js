@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Fragment } from 'react'
+import React, { useState, useEffect,  Fragment } from 'react'
 import Burger from '../../components/Burger/Burger'
 import BuildControls from '../../components/Burger/BuildControls/BuildControls'
 import Modal from '../../components/UI/Modal/Modal'
@@ -6,22 +6,32 @@ import OrderSummery from '../../components/Burger/OrderSummery/OrderSummery'
 import axios from '../../axios-orders';
 import Spinner from '../../components/UI/Spinner/Spinner'
 import withErrorHandler from '../../hoc/withErrorHandler/withErrorHandler'
+import { useDispatch, useSelector } from "react-redux"
+import * as actionTypes from '../../store/actions';
 
 
-const INGREDIENTS_PRICES = {
-  salad: 0.5,
-  cheese: 0.4,
-  meat: 1.3,
-  bacon: 0.7
-}
+
 
 const BurgerBuilder = props => {
-  const [ingredients, setIngredients] = useState(null);
-  const [price, setPrice] = useState(4);
   const [purchageAble, setPurchageAble] = useState(false);
   const [purchaging, setPurchaging] = useState(false);
   const [loading] = useState(false);
-  const [error, setError] = useState(false);
+  const [error] = useState(false);
+  const ingredients = useSelector(state => state.ingredients);
+  const price = useSelector(state => state.totalPrice);
+  const dispatch = useDispatch()
+  const onIngredientAdded = name => {
+    dispatch({
+      type: actionTypes.ADD_INGREDIENT,
+      ingredientName: name
+    })
+  }
+  const onIngredientRemove = name => {
+    dispatch({
+      type: actionTypes.REMOVE_INGREDIENT,
+      ingredientName: name
+    })
+  }
 
   const updatePurchageAble = ingredients => {
     if(ingredients){
@@ -30,35 +40,6 @@ const BurgerBuilder = props => {
       .reduce((sum, el) => sum + el, 0);
       setPurchageAble(totalIngredients>0)
     }
-  }
-
-  // const updatePrice = type => {
-  //   const oldCount = ingredients[type];
-  // }
-
-  const addIngredientsHandler = type => {
-    const oldCount = ingredients[type];
-    const updatedCount = oldCount + 1;
-    const priceAddition = INGREDIENTS_PRICES[type];
-    setIngredients({
-      ...ingredients,
-      [type]: updatedCount 
-    });
-    setPrice(price + priceAddition);
-  }
-
-  const removeIngredientsHandler = type => {
-    const oldCount = ingredients[type];
-    if(oldCount <= 0){
-      return;
-    }
-    const updatedCount = oldCount - 1;
-    const priceAddition = INGREDIENTS_PRICES[type];
-    setIngredients({
-      ...ingredients,
-      [type]: updatedCount 
-    });
-    setPrice(price - priceAddition);
   }
 
   const purchagingHandler = () => {
@@ -70,27 +51,17 @@ const BurgerBuilder = props => {
   }
 
   const continuePurchagingHandler = () => {
-    // alert('Please, Continue')
-    const queryParams = [];
-    for(let i in ingredients){
-      queryParams.push(encodeURIComponent(i) + '=' + encodeURIComponent(ingredients[i]))
-    }
-    queryParams.push('price='+price)
-    let queryString = queryParams.join('&')
-    props.history.push({
-      pathname: '/checkout',
-      search: '?' + queryString
-    })
+    props.history.push('/checkout')
   }
   
   useEffect(() => {
-    axios.get('https://my-react-burger-68eef.firebaseio.com/ingredients.json')
-      .then(res => {
-        setIngredients(res.data)
-      })
-      .catch(err => {
-          setError(true)
-      })
+    // axios.get('https://my-react-burger-68eef.firebaseio.com/ingredients.json')
+    //   .then(res => {
+    //     setIngredients(res.data)
+    //   })
+    //   .catch(err => {
+    //       setError(true)
+    //   })
   }, [])
 
   useEffect(() => {
@@ -110,8 +81,8 @@ const BurgerBuilder = props => {
       <Fragment>
         <Burger ingredients={ingredients}/>
         <BuildControls
-          addIngredients={addIngredientsHandler}
-          removeIngredients={removeIngredientsHandler}
+          addIngredients={onIngredientAdded}
+          removeIngredients={onIngredientRemove}
           disabledInfo={disabledInfo}
           price={price}
           purchageAble={purchageAble}

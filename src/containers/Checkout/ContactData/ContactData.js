@@ -4,6 +4,7 @@ import './ContactData.css';
 import axios from '../../../axios-orders';
 import Spinner from '../../../components/UI/Spinner/Spinner'
 import Input from '../../../components/UI/Input/Input';
+import { useSelector } from "react-redux"
 
 const ContactData = props => {
     const [orderForm, setOrderForm] = useState({
@@ -91,6 +92,8 @@ const ContactData = props => {
     }) 
     const [loading, setLoading] = useState(false)
     const [formIsValid, setFormIsValid] = useState(false);
+    const ingredients = useSelector(state => state.ingredients);
+    const price = useSelector(state => state.totalPrice);
     const orderHandler = event => {
         event.preventDefault();
         setLoading(true);
@@ -99,8 +102,8 @@ const ContactData = props => {
             formData[formEl] = orderForm[formEl].value;
         }
         const order = {
-            ingredients: props.ingredients,
-            price: props.price,
+            ingredients: ingredients,
+            price: price,
             orderData: formData
         }
         axios.post('/orders.json', order)
