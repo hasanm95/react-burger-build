@@ -6,7 +6,7 @@ import ContactData from '../Checkout/ContactData/ContactData'
 import Spinner from '../../components/UI/Spinner/Spinner'
 
 const Checkout = props => {
-    const ingredients = useSelector(state => state.ingredients);
+    const ingredients = useSelector(state => state.burgerBuilder.ingredients);
     const checkoutCanelledHandler = () => {
         props.history.goBack()
     }

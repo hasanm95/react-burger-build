@@ -4,9 +4,11 @@ import './ContactData.css';
 import axios from '../../../axios-orders';
 import Spinner from '../../../components/UI/Spinner/Spinner'
 import Input from '../../../components/UI/Input/Input';
-import { useSelector } from "react-redux"
+import withErrorHandler from '../../../hoc/withErrorHandler/withErrorHandler'
+import * as orderActions from '../../../store/actions/order'
+import { useDispatch, useSelector } from "react-redux"
 
-const ContactData = props => {
+const ContactData = props => { 
     const [orderForm, setOrderForm] = useState({
         name: {
             elementType: 'input',
@@ -90,13 +92,13 @@ const ContactData = props => {
             valid: true
         }
     }) 
-    const [loading, setLoading] = useState(false)
     const [formIsValid, setFormIsValid] = useState(false);
     const ingredients = useSelector(state => state.ingredients);
     const price = useSelector(state => state.totalPrice);
+    const loading = useSelector(state => state.loading);
+    const dispatch = useDispatch()
     const orderHandler = event => {
         event.preventDefault();
-        setLoading(true);
         const formData = {};
         for(let formEl in orderForm){
             formData[formEl] = orderForm[formEl].value;
@@ -106,14 +108,7 @@ const ContactData = props => {
             price: price,
             orderData: formData
         }
-        axios.post('/orders.json', order)
-        .then(response => {
-            setLoading(false);
-            props.history.push('/orders')
-        })
-        .catch(error => {
-            setLoading(false);
-        })
+        dispatch(orderActions.purchaseBurger(formData))
     }
 
     const onChangeHandler = (event, inputindentifier) => {
@@ -185,4 +180,4 @@ const ContactData = props => {
     )
 }
 
-export default ContactData
+export default withErrorHandler(ContactData, axios)

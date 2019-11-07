@@ -30,12 +30,12 @@ const BurgerBuilder = props => {
     dispatch(burgerBuilderActions.removeIngredient(name))
   }
 
-  const updatePurchageAble = ingredients => {
-    if(ingredients){
-      const totalIngredients = Object.keys(ingredients)
-      .map(igKey => ingredients[igKey])
+  const updatePurchageAble = ings => {
+    if(ings){
+      const totalings = Object.keys(ings)
+      .map(igKey => ings[igKey])
       .reduce((sum, el) => sum + el, 0);
-      setPurchageAble(totalIngredients>0)
+      setPurchageAble(totalings>0)
     }
   }
 
@@ -54,8 +54,11 @@ const BurgerBuilder = props => {
 
   useEffect(() => {
     onInitIngredients()
+  }, [])  
+
+  useEffect(() => {
     updatePurchageAble(ingredients)
-  },[])  
+  })
 
   const disabledInfo = {...ingredients};
   for(let key in disabledInfo){
