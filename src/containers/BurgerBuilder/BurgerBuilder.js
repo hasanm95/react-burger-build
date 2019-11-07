@@ -7,30 +7,27 @@ import axios from '../../axios-orders';
 import Spinner from '../../components/UI/Spinner/Spinner'
 import withErrorHandler from '../../hoc/withErrorHandler/withErrorHandler'
 import { useDispatch, useSelector } from "react-redux"
-import * as actionTypes from '../../store/actions';
-
-
+import * as burgerBuilderActions from '../../store/actions/';
 
 
 const BurgerBuilder = props => {
   const [purchageAble, setPurchageAble] = useState(false);
   const [purchaging, setPurchaging] = useState(false);
-  const [loading] = useState(false);
-  const [error] = useState(false);
-  const ingredients = useSelector(state => state.ingredients);
-  const price = useSelector(state => state.totalPrice);
+  const ingredients = useSelector(state => state.burgerBuilder.ingredients);
+  const error = useSelector(state => state.burgerBuilder.error);
+  const price = useSelector(state => state.burgerBuilder.totalPrice);
   const dispatch = useDispatch()
-  const onIngredientAdded = name => {
-    dispatch({
-      type: actionTypes.ADD_INGREDIENT,
-      ingredientName: name
-    })
+
+  const onInitIngredients = () => {
+    dispatch(burgerBuilderActions.initIngredients())
   }
+
+  const onIngredientAdded = name => {
+    dispatch(burgerBuilderActions.addIngredient(name))
+  }
+
   const onIngredientRemove = name => {
-    dispatch({
-      type: actionTypes.REMOVE_INGREDIENT,
-      ingredientName: name
-    })
+    dispatch(burgerBuilderActions.removeIngredient(name))
   }
 
   const updatePurchageAble = ingredients => {
@@ -54,19 +51,11 @@ const BurgerBuilder = props => {
     props.history.push('/checkout')
   }
   
-  useEffect(() => {
-    // axios.get('https://my-react-burger-68eef.firebaseio.com/ingredients.json')
-    //   .then(res => {
-    //     setIngredients(res.data)
-    //   })
-    //   .catch(err => {
-    //       setError(true)
-    //   })
-  }, [])
 
   useEffect(() => {
+    onInitIngredients()
     updatePurchageAble(ingredients)
-  })  
+  },[])  
 
   const disabledInfo = {...ingredients};
   for(let key in disabledInfo){
@@ -95,9 +84,6 @@ const BurgerBuilder = props => {
     purchaseCancelled={cancelPurchagingHandler}
     purchaseContiued={continuePurchagingHandler}
     price={price} />
-  }
-  if(loading){
-    orderSummery = <Spinner/>
   }
 
   return (

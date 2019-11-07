@@ -6,16 +6,19 @@ import * as serviceWorker from './serviceWorker';
 import WebFont from 'webfontloader';
 import {BrowserRouter} from 'react-router-dom'
 import {Provider} from 'react-redux'
-import {createStore} from 'redux'
-import reducer from './store/reducer';
+import {createStore, applyMiddleware, compose} from 'redux'
+import reducer from './store/reducers/rootReducer';
+import thunk from 'redux-thunk';
 
 WebFont.load({
   google: {
     families: ['Open Sans:400,700', 'sans-serif']
   }
 });
-
-const store = createStore(reducer);
+const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+const store = createStore(reducer, composeEnhancers(
+  applyMiddleware(thunk)
+))
 
 const app = (
   <Provider store={store}>
