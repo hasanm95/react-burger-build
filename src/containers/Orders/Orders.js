@@ -1,28 +1,18 @@
-import React, {useState, useEffect} from 'react'
+import React, {useEffect} from 'react'
 import Order from '../../components/Order/Order'
-import axios from '../../axios-orders';
 import Spinner from '../../components/UI/Spinner/Spinner'
+import {useSelector, useDispatch} from 'react-redux';
+import {fetchOrders} from '../../store/actions'
 
 const Orders = () => {
-    const [orders, setOrders] = useState([]);
-    const [loading, setLoading] = useState(true);
-
+    const orders = useSelector(state => state.order.orders)
+    const loading = useSelector(state => state.order.loading)
+    const dispatch = useDispatch()
+    const onFetchOrders = () => {
+        dispatch(fetchOrders())
+    }
     useEffect(() => {
-        axios.get('/orders.json')
-            .then(res => {
-                const fetchOrders = [];
-                for(let key in res.data){
-                    fetchOrders.push({
-                        ...res.data[key],
-                        id: key
-                    })
-                }
-                setOrders(fetchOrders)
-                setLoading(false)
-            })
-            .catch(err => {
-                setLoading(false)
-            })
+        onFetchOrders()
     }, [])
 
     let orderOutput = <Spinner/>
