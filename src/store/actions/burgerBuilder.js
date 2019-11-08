@@ -10,7 +10,7 @@ export const addIngredient = name => {
         type: ADD_INGREDIENT,
         ingredientName: name
     }
-}
+} 
 
 export const removeIngredient = name => {
     return {

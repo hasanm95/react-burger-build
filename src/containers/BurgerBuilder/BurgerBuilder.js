@@ -7,7 +7,7 @@ import axios from '../../axios-orders';
 import Spinner from '../../components/UI/Spinner/Spinner'
 import withErrorHandler from '../../hoc/withErrorHandler/withErrorHandler'
 import { useDispatch, useSelector } from "react-redux"
-import * as burgerBuilderActions from '../../store/actions/';
+import * as actions from '../../store/actions/';
 
 
 const BurgerBuilder = props => {
@@ -19,15 +19,19 @@ const BurgerBuilder = props => {
   const dispatch = useDispatch()
 
   const onInitIngredients = () => {
-    dispatch(burgerBuilderActions.initIngredients())
+    dispatch(actions.initIngredients())
   }
 
   const onIngredientAdded = name => {
-    dispatch(burgerBuilderActions.addIngredient(name))
+    dispatch(actions.addIngredient(name))
   }
 
   const onIngredientRemove = name => {
-    dispatch(burgerBuilderActions.removeIngredient(name))
+    dispatch(actions.removeIngredient(name))
+  }
+
+  const onPurchaseInit = () => {
+    dispatch(actions.purchaseInit())
   }
 
   const updatePurchageAble = ings => {
@@ -48,6 +52,7 @@ const BurgerBuilder = props => {
   }
 
   const continuePurchagingHandler = () => {
+    onPurchaseInit();
     props.history.push('/checkout')
   }
   

@@ -93,9 +93,9 @@ const ContactData = props => {
         }
     }) 
     const [formIsValid, setFormIsValid] = useState(false);
-    const ingredients = useSelector(state => state.ingredients);
-    const price = useSelector(state => state.totalPrice);
-    const loading = useSelector(state => state.loading);
+    const ingredients = useSelector(state => state.burgerBuilder.ingredients);
+    const price = useSelector(state => state.burgerBuilder.totalPrice);
+    const loading = useSelector(state => state.order.loading);
     const dispatch = useDispatch()
     const orderHandler = event => {
         event.preventDefault();
@@ -108,7 +108,7 @@ const ContactData = props => {
             price: price,
             orderData: formData
         }
-        dispatch(orderActions.purchaseBurger(formData))
+        dispatch(orderActions.purchaseBurger(order))
     }
 
     const onChangeHandler = (event, inputindentifier) => {

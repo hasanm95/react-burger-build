@@ -1,5 +1,10 @@
 
-import {PURCHASE_BURGER_START, PURCHASE_BURGER_SUCCESS, PURCHASE_BURGER_FAIL} from './types.js'
+import {
+	PURCHASE_BURGER_START, 
+	PURCHASE_BURGER_SUCCESS, 
+	PURCHASE_BURGER_FAIL,
+	PURCHASE_INIT
+} from './types.js'
 import axios from '../../axios-orders.js';
 
 export const purchaseBurgerSuccess = (id, orderData) => {
@@ -22,18 +27,23 @@ export const purchaseBurgerStart = () => {
 		type: PURCHASE_BURGER_START
 	}
 }
-
+ 
 export const purchaseBurger = (orderData) => {
 	return dispatch => {
 		dispatch(purchaseBurgerStart())
-		console.log(orderData)
-        // axios.post('/orders.json', orderData)
-        // .then(response => {
-        // 	console.log(response.data)
-        //     dispatch(purchaseBurgerSuccess(response.data, orderData))
-        // })
-        // .catch(error => {
-        //     dispatch(purchaseBurgerFail(error))
-        // })
+        axios.post('/orders.json', orderData)
+        .then(response => {
+            dispatch(purchaseBurgerSuccess(response.data.name, orderData))
+        })
+        .catch(error => {
+            dispatch(purchaseBurgerFail(error))
+        })
 	}	
 }
+
+export const purchaseInit = () => {
+	return {
+		type: PURCHASE_INIT
+	}
+}
+

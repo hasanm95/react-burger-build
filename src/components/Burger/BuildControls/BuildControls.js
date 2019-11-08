@@ -1,7 +1,7 @@
 import React from 'react'
 import './BuildControls.css'
 import BuildControl from './BuildControl/BuildControl'
-
+import { useSelector } from "react-redux"
 
 const controls = [
     {label: 'Salad', type:"salad"},
@@ -11,9 +11,10 @@ const controls = [
 ]
 
 const BuildControls = props => {
+    const price = useSelector(state => state.burgerBuilder.totalPrice);
     return (
         <div className="BuildControls">
-            <p>Current Price: <strong>{props.price.toFixed(2)}</strong></p>
+            <p>Current Price: <strong>{price}</strong></p>
             {
                 controls.map((ctrl, i) => (
                     <BuildControl 

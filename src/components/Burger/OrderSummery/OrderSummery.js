@@ -1,5 +1,6 @@
 import React, {Fragment} from 'react'
 import Button from '../../UI/Button/Button'
+import { useSelector } from "react-redux"
 
 
 const OrderSummery = props => {
@@ -7,6 +8,7 @@ const OrderSummery = props => {
         .map((igKey, i) => (
             <li key={igKey+i}><span style={{textTransform: 'capitalize'}}>{igKey}</span>: {props.ingredients[igKey]}</li>
         ))
+    const price = useSelector(state => state.burgerBuilder.totalPrice);
     return (
         <Fragment>
             <h3>Your Order</h3>
@@ -14,7 +16,7 @@ const OrderSummery = props => {
             <ul>
                 {ingredientSummery}
             </ul>
-            <p><strong>Total Price:</strong> {props.price.toFixed(2)}</p>
+            <p><strong>Total Price:</strong> {price}</p>
             <p>Continue to checkout</p>
             <Button btnType="Danger" clicked={props.purchaseCancelled}>Cancel</Button>
             <Button btnType="Success" clicked={props.purchaseContiued}>Continue</Button>
