@@ -8,7 +8,7 @@ import {useSelector} from 'react-redux';
 const Layout = ({children}) => {
   
   const [showSideDrawer, setShowSideDrawer] = useState(false);
-  const isAuthenticated = useSelector(state => state.auth.idToken !== null);
+  const isAuthenticated = useSelector(state => state.auth.token !== null);
   const sideDrawerCloseHandler = () =>{
     setShowSideDrawer(false)
   }

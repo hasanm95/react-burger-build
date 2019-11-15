@@ -10,38 +10,26 @@ import Logout from './containers/Auth/Logout/Logout'
 import {checkAuthState} from './store/actions'
 
 function App() {
-  const isAuthenticated = useSelector(state => state.auth.idToken !== null)
-  const dispatch = useDispatch();
-  const onTryAutoSignUp = () => {
-    dispatch(checkAuthState());
-  }
-  useEffect(() => {
-    onTryAutoSignUp()
-  }, [])
+  const isAuthenticated = useSelector(state => state.auth.token !== null)
+  // const dispatch = useDispatch();
+  // const onTryAutoSignUp = () => {
+  //   dispatch(checkAuthState());
+  // }
+  // useEffect(() => {
+  //   onTryAutoSignUp()
+  // }, [])
 
-  let routes = (
-    <Switch>
-      <Route path="/auth" component={Auth} />
-      <Route path="/" exact component={BurgerBuilder} />
-      <Redirect to="/" />
-    </Switch>
-  )
 
-  if(isAuthenticated){
-    routes = (
-      <Switch>
-          <Route path="/orders" component={Orders} />
-          <Route path="/checkout" component={Checkout} />
-          <Route path="/logout" component={Logout} />
-          <Route path="/" exact component={BurgerBuilder} />
-      </Switch>
-    )
-  }
 
   return (
     <div className="App">
       <Layout>
-        {routes}
+        <Route path="/auth" component={Auth} />
+        <Route path="/" exact component={BurgerBuilder} />
+        <Route path="/orders" component={Orders} />
+        <Route path="/checkout" component={Checkout} />
+        <Route path="/logout" component={Logout} />
+        <Redirect to="/" />
       </Layout>
     </div>
   );

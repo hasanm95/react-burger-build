@@ -1,7 +1,7 @@
 import * as actionTypes from '../actions/types';
 
 const INITIAL_STATE = {
-    idToken: null,
+    token: null,
     userId: null,
     error: null,
     loading: false,
@@ -19,7 +19,7 @@ const reducer = (state=INITIAL_STATE, action) =>{
         case actionTypes.AUTH_SUCCESS:
             return {
                 ...state,
-                idToken: action.idToken,
+                token: action.idToken,
                 userId: action.userId,
                 error: null,
                 loading: false
@@ -33,7 +33,7 @@ const reducer = (state=INITIAL_STATE, action) =>{
         case actionTypes.AUTH_LOGOUT:
             return {
                 ...state,
-                idToken: null,
+                token: null,
                 userId: null
             }
         case actionTypes.AUTH_REDIRECT_PATH:
