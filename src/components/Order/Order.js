@@ -9,7 +9,6 @@ const Order = props => {
             amount: props.ingredients[ingredientName]
         })
     }
-    
     return (
         <div className="Order">
             <ul className="IngredientsList">

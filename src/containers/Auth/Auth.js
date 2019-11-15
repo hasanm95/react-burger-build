@@ -1,26 +1,95 @@
-import React from 'react'
-import {useSelector} from 'react-redux';
-import Form from '../../components/Form/Form'
+import React, {useEffect, useState} from 'react'
+import useForm from 'react-hook-form'
+import {useSelector, useDispatch} from 'react-redux';
+import {Redirect} from 'react-router-dom';
+import Button from '../../components/UI/Button/Button'
 import Spinner from '../../components/UI/Spinner/Spinner'
+import {auth, authRedirectPath} from '../../store/actions/auth'
 import './Auth.css';
  
 const Auth = () => {
-    const isAuthenticated = useSelector(state => state.auth.token)
+    const { register, handleSubmit, errors } = useForm({
+        mode: 'onBlur'
+    });
+    const [isSignUp, setIsSignUp] = useState(true);
+    const isAuthenticated = useSelector(state => state.auth.token !== null);
     const loading = useSelector(state => state.auth.loading);
     const error = useSelector(state => state.auth.error);
-    const errorMessage = error ? <p>{error.message}</p> : '';
-    let form = <Form/>;
-    if(loading){
-        form = <Spinner/>;
+    const redirectPath = useSelector(state => state.auth.authRedirectPath);
+    const building = useSelector(state => state.burgerBuilder.building);
+    const dispatch = useDispatch();
+    const onSubmitHandler = (data) => {
+        const {email, password} = data;
+        dispatch(auth(email, password, isSignUp))
     }
-    // console.log(isAuthenticated);
+    useEffect(() => {
+        if(isAuthenticated){
+            setIsSignUp(isAuthenticated);
+        }
+        if(!building && redirectPath !== '/'){
+            dispatch(authRedirectPath('/'))
+        }
+    }, [isAuthenticated, building, redirectPath, dispatch]);
+
+    let errorMessage = error ? <p>{error.message}</p> : '';
+    let form = <Spinner/>;
+    if(!loading){
+        form = <form className="form" onSubmit={handleSubmit(onSubmitHandler)}>
+                <div className="form__group">
+                    <input 
+                        type="text"
+                        id="email"
+                        name="email"
+                        placeholder="Email Address"
+                        className="form__input"
+                        ref={register({
+                            required: 'Email is required',
+                            pattern: {
+                                value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i,
+                                message: "invalid email address"
+                            }
+                        })}
+                    />
+                    <p className="form__error">{errors.email && errors.email.message}</p>
+                </div>
+                <div className="form__group">
+                    <input 
+                        type="password"
+                        id="password"
+                        name="password"
+                        placeholder="Password"
+                        className="form__input"
+                        ref={register({
+                            required: 'Password is required',
+                            minLength: {
+                                value: 6,
+                                message: "Minimum Value is 6"
+                            },
+                            maxLength: {
+                                value: 8,
+                                message: "Maximum Value is 8"
+                            }
+                        })}
+                    />
+                    <p className="form__error">{errors.password && errors.password.message}</p>
+                </div>
+                <div className="form__group">
+                    <Button btnType="Success">Submit</Button>
+                </div>
+            </form>
+    }
+    let authRedirect = null;
+    if(isAuthenticated){
+        authRedirect = <Redirect to={redirectPath}/>
+    }
+
     return (
         <div className="Auth">
-            {form}
+            {authRedirect}
             {errorMessage}
+            {form}
         </div>
     )
-
 }
 
-export default Auth;
+export default Auth; 

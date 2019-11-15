@@ -5,7 +5,7 @@ const INITIAL_STATE = {
 	loading: false,
 	purchased: false
 }
-
+ 
 const reducer = (state = INITIAL_STATE, action) => {
 	switch(action.type){
 		case actionTypes.PURCHASE_INIT:

@@ -7,6 +7,21 @@
     padding: 25px 10px;
     box-sizing: border-box;
 }
+.form__group{
+    margin-bottom: 10px;
+}
+.form__input{
+    width: 95%;
+    height: 38px;
+    padding-left: 10px;
+    padding-right: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    -ms-border-radius: 5px;
+    -o-border-radius: 5px;
+} 
 
 @media (min-width: 600px) {
     .Auth {

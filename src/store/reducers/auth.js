@@ -7,7 +7,7 @@ const INITIAL_STATE = {
     loading: false,
     authRedirectPath: '/'
 }
-
+ 
 const reducer = (state=INITIAL_STATE, action) =>{
     switch(action.type){
         case actionTypes.AUTH_START:

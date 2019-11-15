@@ -10,14 +10,15 @@ import axios from '../../axios-orders';
 const Orders = () => {
     const orders = useSelector(state => state.order.orders)
     const loading = useSelector(state => state.order.loading)
-    const token = useSelector(state => state.auth.idToken)
+    const token = useSelector(state => state.auth.token)
+    const userId = useSelector(state => state.auth.userId);
     const dispatch = useDispatch()
     const onFetchOrders = () => {
-        dispatch(fetchOrders(token))
+        dispatch(fetchOrders(token, userId))
     }
     useEffect(() => {
         onFetchOrders(token)
-    }, [])
+    },[])
 
     let orderOutput = <Spinner/>
     if(!loading){

@@ -69,7 +69,7 @@ const BurgerBuilder = props => {
 
   useEffect(() => {
     onInitIngredients()
-  }, [])  
+  },[])  
 
   useEffect(() => {
     updatePurchageAble(ingredients)
