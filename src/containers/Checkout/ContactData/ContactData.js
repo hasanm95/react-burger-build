@@ -96,6 +96,8 @@ const ContactData = props => {
     const ingredients = useSelector(state => state.burgerBuilder.ingredients);
     const price = useSelector(state => state.burgerBuilder.totalPrice);
     const loading = useSelector(state => state.order.loading);
+    const token = useSelector(state => state.auth.idToken);
+    const userId = useSelector(state => state.auth.userId);
     const dispatch = useDispatch()
     const orderHandler = event => {
         event.preventDefault();
@@ -106,9 +108,10 @@ const ContactData = props => {
         const order = {
             ingredients: ingredients,
             price: price,
-            orderData: formData
+            orderData: formData,
+            userId
         }
-        dispatch(orderActions.purchaseBurger(order))
+        dispatch(orderActions.purchaseBurger(token, order))
     }
 
     const onChangeHandler = (event, inputindentifier) => {

@@ -3,16 +3,20 @@ import Order from '../../components/Order/Order'
 import Spinner from '../../components/UI/Spinner/Spinner'
 import {useSelector, useDispatch} from 'react-redux';
 import {fetchOrders} from '../../store/actions'
+import withErrorHandler from '../../hoc/withErrorHandler/withErrorHandler';
+import axios from '../../axios-orders';
+
 
 const Orders = () => {
     const orders = useSelector(state => state.order.orders)
     const loading = useSelector(state => state.order.loading)
+    const token = useSelector(state => state.auth.idToken)
     const dispatch = useDispatch()
     const onFetchOrders = () => {
-        dispatch(fetchOrders())
+        dispatch(fetchOrders(token))
     }
     useEffect(() => {
-        onFetchOrders()
+        onFetchOrders(token)
     }, [])
 
     let orderOutput = <Spinner/>
@@ -33,4 +37,4 @@ const Orders = () => {
     )
 }
 
-export default Orders
+export default withErrorHandler(Orders, axios)

@@ -16,6 +16,7 @@ const BurgerBuilder = props => {
   const ingredients = useSelector(state => state.burgerBuilder.ingredients);
   const error = useSelector(state => state.burgerBuilder.error);
   const price = useSelector(state => state.burgerBuilder.totalPrice);
+  const isAuthenticated = useSelector(state => state.auth.idToken);
   const dispatch = useDispatch()
 
   const onInitIngredients = () => {
@@ -34,6 +35,10 @@ const BurgerBuilder = props => {
     dispatch(actions.purchaseInit())
   }
 
+  const onSetAuthRedirectPath = path => {
+    dispatch(actions.authRedirectPath(path))
+  }
+
   const updatePurchageAble = ings => {
     if(ings){
       const totalings = Object.keys(ings)
@@ -44,7 +49,12 @@ const BurgerBuilder = props => {
   }
 
   const purchagingHandler = () => {
-    setPurchaging(true)
+    if(isAuthenticated){
+      setPurchaging(true) 
+    }else{
+      onSetAuthRedirectPath('/checkout')
+      props.history.push('/auth')
+    }
   }
 
   const cancelPurchagingHandler = () => {
@@ -84,6 +94,7 @@ const BurgerBuilder = props => {
           price={price}
           purchageAble={purchageAble}
           ordered={purchagingHandler}
+          isAuth={isAuthenticated}
         />
       </Fragment>
     )

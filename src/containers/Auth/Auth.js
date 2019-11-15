@@ -1,10 +1,12 @@
-import React, {useState} from 'react'
+import React, {useState, useEffect} from 'react'
 import Input from '../../components/UI/Input/Input'
 import Button from '../../components/UI/Button/Button'
 import './Auth.css';
-import {auth} from '../../store/actions'
+import {auth, authRedirectPath} from '../../store/actions'
 import {useSelector, useDispatch} from 'react-redux'
-
+import Spinner from '../../components/UI/Spinner/Spinner'
+import {Redirect} from 'react-router-dom';
+ 
 const Auth = () => {
     const [authForm, setAuthForm] = useState({
         email: {
@@ -36,16 +38,32 @@ const Auth = () => {
         }
     }) 
     const [formIsValid, setFormIsValid] = useState(false);
+    const [isSignUp, setIsSignUp] = useState(true);
     const dispatch = useDispatch();
-
     const onAuthStart = (email, password) => {
-        dispatch(auth(email, password))
+        dispatch(auth(email, password, isSignUp))
     }
+    const loading = useSelector(state => state.auth.loading);
+    const error = useSelector(state => state.auth.error);
+    const isAuthenticated = useSelector(state => state.auth.idToken);
+    // const redirectPath = useSelector(state => state.auth.authRedirectPath)
+    // const building = useSelector(state => state.burgerBuilder.building)
+
+    // useEffect(() => {
+    //     console.log(building);
+    //     console.log(redirectPath);
+    //     console.log(isAuthenticated);
+    // })
+
+    console.log(isAuthenticated);
+
+    const errorMessage = error ? <p>{error.message}</p> : '';
 
     const onSubmitHandler = event => {
         event.preventDefault();
         const {email, password} = authForm;
         onAuthStart(email.value, password.value)
+        
     }
 
     const onChangeHandler = (event, controlName) => {
@@ -81,7 +99,9 @@ const Auth = () => {
         return isValid;
     }
 
-
+    const switchAuthModeHandler = () => {
+        setIsSignUp(prevState => !prevState)
+    }
 
     const formElementArray = [];
     for(let key in authForm){
@@ -90,7 +110,15 @@ const Auth = () => {
             config: authForm[key]
         })
     }
-    const form = (
+
+    let authenticated = <Redirect to='/checkout'/>;
+    // if(isAuthenticated){
+    //     authenticated = <Redirect to={redirectPath}/>
+    // }
+
+    
+
+    let form = (
         <form onSubmit={onSubmitHandler}>
             {
                 formElementArray.map(formElement => {
@@ -106,13 +134,18 @@ const Auth = () => {
                     />
                 })
             }
-            <Button disabled={!formIsValid} btnType="Success">Sign Up</Button>
+            <Button disabled={!formIsValid} btnType="Success">{isSignUp ? 'Sign Up' : 'Sign In'}</Button>
         </form>
     )
+    if(loading){
+        form = <Spinner/>
+    }
 
     return (
         <div className="Auth">
+            {errorMessage}
             {form}
+            <Button clicked={switchAuthModeHandler} btnType="Danger">SWITCH TO {isSignUp ? 'SIGNIN' : 'SIGNUP'}</Button>
         </div>
     )
 
