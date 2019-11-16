@@ -31,52 +31,58 @@ const Auth = () => {
         }
     }, [isAuthenticated, building, redirectPath, dispatch]);
 
+    const switchAuthModeHandler = () => {
+        setIsSignUp(prevState => !prevState)
+    }
+
     let errorMessage = error ? <p>{error.message}</p> : '';
     let form = <Spinner/>;
     if(!loading){
-        form = <form className="form" onSubmit={handleSubmit(onSubmitHandler)}>
-                <div className="form__group">
-                    <input 
-                        type="text"
-                        id="email"
-                        name="email"
-                        placeholder="Email Address"
-                        className="form__input"
-                        ref={register({
-                            required: 'Email is required',
-                            pattern: {
-                                value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i,
-                                message: "invalid email address"
-                            }
-                        })}
-                    />
-                    <p className="form__error">{errors.email && errors.email.message}</p>
-                </div>
-                <div className="form__group">
-                    <input 
-                        type="password"
-                        id="password"
-                        name="password"
-                        placeholder="Password"
-                        className="form__input"
-                        ref={register({
-                            required: 'Password is required',
-                            minLength: {
-                                value: 6,
-                                message: "Minimum Value is 6"
-                            },
-                            maxLength: {
-                                value: 8,
-                                message: "Maximum Value is 8"
-                            }
-                        })}
-                    />
-                    <p className="form__error">{errors.password && errors.password.message}</p>
-                </div>
-                <div className="form__group">
-                    <Button btnType="Success">Submit</Button>
-                </div>
-            </form>
+        form = <div className="form__wrapper">
+                <form className="form" onSubmit={handleSubmit(onSubmitHandler)}>
+                    <div className="form__group">
+                        <input 
+                            type="text"
+                            id="email"
+                            name="email"
+                            placeholder="Email Address"
+                            className="form__input"
+                            ref={register({
+                                required: 'Email is required',
+                                pattern: {
+                                    value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i,
+                                    message: "invalid email address"
+                                }
+                            })}
+                        />
+                        <p className="form__error">{errors.email && errors.email.message}</p>
+                    </div>
+                    <div className="form__group">
+                        <input 
+                            type="password"
+                            id="password"
+                            name="password"
+                            placeholder="Password"
+                            className="form__input"
+                            ref={register({
+                                required: 'Password is required',
+                                minLength: {
+                                    value: 6,
+                                    message: "Minimum Value is 6"
+                                },
+                                maxLength: {
+                                    value: 8,
+                                    message: "Maximum Value is 8"
+                                }
+                            })}
+                        />
+                        <p className="form__error">{errors.password && errors.password.message}</p>
+                    </div>
+                    <div className="form__group">
+                        <Button btnType="Success">Submit</Button>
+                    </div>
+                </form>
+            </div>
     }
     let authRedirect = null;
     if(isAuthenticated){
@@ -88,6 +94,9 @@ const Auth = () => {
             {authRedirect}
             {errorMessage}
             {form}
+            <Button
+                clicked={switchAuthModeHandler}
+                btnType="Danger">SWITCH TO {isSignUp ? 'SIGNIN' : 'SIGNUP'}</Button>
         </div>
     )
 }
